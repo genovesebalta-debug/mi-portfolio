@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baltazar · Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+    body {
+      background-color: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 0;
+    }
+
+    .cursor {
+      width: 12px; height: 12px;
+      background: #a855f7;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s ease;
+    }
+
+    .cursor-follower {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transition: all 0.15s ease;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; width: 100%;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a855f7, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+    .nav-links a {
+      color: #888888;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover { color: #ffffff; }
+
+    /* HERO */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      z-index: 1;
+      position: relative;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      background: linear-gradient(90deg, #a855f7, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #aaaaaa;
+      margin-bottom: 0.5rem;
+    }
+
+    /* TYPEWRITER */
+    .typewriter {
+      font-size: 1.1rem;
+      color: #a855f7;
+      margin-bottom: 2rem;
+      min-height: 1.5rem;
+    }
+
+    .cursor-blink {
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .btn {
+      padding: 0.8rem 2rem;
+      border: 2px solid #a855f7;
+      background: transparent;
+      color: #a855f7;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: none;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      background: #a855f7;
+      color: #ffffff;
+      box-shadow: 0 0 20px #a855f7;
+      transform: scale(1.05);
+    }
+
+    .seccion {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .tag {
+      font-size: 0.85rem;
+      color: #a855f7;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .divisor {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, #a855f7, #3b82f6);
+      margin: 0 auto 2rem auto;
+      border-radius: 10px;
+    }
+
+    .seccion h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, #ffffff, #aaaaaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .seccion > p {
+      font-size: 1.1rem;
+      color: #888888;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .skills {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .skill-card {
+      padding: 0.6rem 1.4rem;
+      border: 1px solid #2a2a2a;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      color: #cccccc;
+      background: #111111;
+      transition: all 0.3s ease;
+    }
+
+    .skill-card:hover {
+      border-color: #a855f7;
+      color: #a855f7;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+    }
+
+    /* PROYECTOS */
+    .proyectos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .proyecto-card {
+      background: #111111;
+      border: 1px solid #1f1f1f;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    .proyecto-card:hover {
+      border-color: #a855f7;
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+    }
+
+    .proyecto-emoji { font-size: 2rem; margin-bottom: 1rem; }
+
+    .proyecto-card h3 {
+      font-size: 1.2rem;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .proyecto-card p {
+      font-size: 0.9rem;
+      color: #666666;
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+
+    .proyecto-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .proyecto-tag {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      background: #1a1a1a;
+      color: #a855f7;
+      border: 1px solid #2a2a2a;
+    }
+
+    /* SERVICIOS */
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .servicio-card {
+      background: #111111;
+      border: 1px solid #1f1f1f;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .servicio-card.destacado {
+      border-color: #a855f7;
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.1);
+    }
+
+    .servicio-card.destacado::before {
+      content: '⭐ Popular';
+      position: absolute;
+      top: 1rem; right: 1rem;
+      font-size: 0.7rem;
+      color: #a855f7;
+      border: 1px solid #a855f7;
+      padding: 0.2rem 0.6rem;
+      border-radius: 50px;
+    }
+
+    .servicio-card:hover {
+      transform: translateY(-6px);
+      border-color: #a855f7;
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+    }
+
+    .servicio-emoji { font-size: 2.5rem; margin-bottom: 1rem; }
+
+    .servicio-card h3 {
+      font-size: 1.2rem;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .servicio-precio {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a855f7, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 1rem 0;
+    }
+
+    .servicio-card p {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* CONTACTO */
+    .contacto-box {
+      background: #111111;
+      border: 1px solid #1f1f1f;
+      border-radius: 20px;
+      padding: 3rem;
+      margin-top: 3rem;
+    }
+
+    .contacto-box p {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .redes {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .red-link {
+      color: #666;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+      padding: 0.5rem 1rem;
+      border: 1px solid #1f1f1f;
+      border-radius: 50px;
+    }
+
+    .red-link:hover {
+      color: #a855f7;
+      border-color: #a855f7;
+    }
+
+    footer p {
+      font-size: 0.85rem;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <canvas id="particles"></canvas>
+
+  <nav>
+    <span class="nav-logo">Baltazar.</span>
+    <ul class="nav-links">
+      <li><a href="#sobre-mi">Sobre mí</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Hola, soy Baltazar 👋</h1>
+    <p>Desarrollador Frontend · Experiencias visuales · IA</p>
+    <div class="typewriter">
+      <span id="typewriter-text"></span><span class="cursor-blink">|</span>
+    </div>
+    <button class="btn" onclick="document.getElementById('proyectos').scrollIntoView({behavior:'smooth'})">
+      Ver mi trabajo
+    </button>
+  </section>
+
+  <!-- SOBRE MÍ -->
+  <section class="seccion" id="sobre-mi">
+    <p class="tag">✦ Sobre mí</p>
+    <div class="divisor"></div>
+    <h2>Construyo experiencias digitales</h2>
+    <p>Soy un desarrollador frontend apasionado por crear interfaces que combinan
+    diseño visual impactante con inteligencia artificial. Me interesa el espacio
+    donde el código se convierte en arte.</p>
+    <div class="skills">
+      <span class="skill-card">HTML & CSS</span>
+      <span class="skill-card">JavaScript</span>
+      <span class="skill-card">React</span>
+      <span class="skill-card">IA & APIs</span>
+      <span class="skill-card">Animaciones</span>
+      <span class="skill-card">Three.js</span>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section class="seccion" id="proyectos">
+    <p class="tag">✦ Proyectos</p>
+    <div class="divisor"></div>
+    <h2>Lo que estoy construyendo</h2>
+    <div class="proyectos-grid">
+      <div class="proyecto-card">
+        <div class="proyecto-emoji">🤖</div>
+        <h3>Chat con IA</h3>
+        <p>Interfaz conversacional conectada a una API de inteligencia artificial con diseño minimalista.</p>
+        <div class="proyecto-tags">
+          <span class="proyecto-tag">JavaScript</span>
+          <span class="proyecto-tag">API</span>
+          <span class="proyecto-tag">CSS</span>
+        </div>
+      </div>
+      <div class="proyecto-card">
+        <div class="proyecto-emoji">🌌</div>
+        <h3>Experiencia 3D</h3>
+        <p>Escena interactiva en el navegador usando Three.js con partículas y geometría animada.</p>
+        <div class="proyecto-tags">
+          <span class="proyecto-tag">Three.js</span>
+          <span class="proyecto-tag">WebGL</span>
+          <span class="proyecto-tag">JavaScript</span>
+        </div>
+      </div>
+      <div class="proyecto-card">
+        <div class="proyecto-emoji">✨</div>
+        <h3>Portfolio Visual</h3>
+        <p>Este mismo sitio — construido desde cero con HTML, CSS y JS puro. Sin frameworks.</p>
+        <div class="proyecto-tags">
+          <span class="proyecto-tag">HTML</span>
+          <span class="proyecto-tag">CSS</span>
+          <span class="proyecto-tag">Canvas</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section class="seccion" id="servicios">
+    <p class="tag">✦ Servicios</p>
+    <div class="divisor"></div>
+    <h2>¿En qué puedo ayudarte?</h2>
+    <div class="servicios-grid">
+
+      <div class="servicio-card">
+        <div class="servicio-emoji">🎨</div>
+        <h3>Landing Page</h3>
+        <div class="servicio-precio">$200 USD</div>
+        <p>Página de presentación con diseño visual impactante, animaciones y formulario de contacto.</p>
+      </div>
+
+      <div class="servicio-card destacado">
+        <div class="servicio-emoji">💼</div>
+        <h3>Portfolio Pro</h3>
+        <div class="servicio-precio">$300 USD</div>
+        <p>Portfolio completo con múltiples secciones, diseño premium y efectos visuales avanzados.</p>
+      </div>
+
+      <div class="servicio-card">
+        <div class="servicio-emoji">🤖</div>
+        <h3>Interfaz con IA</h3>
+        <div class="servicio-precio">$600 USD</div>
+        <p>Aplicación web con inteligencia artificial integrada, chat, o herramienta personalizada.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="seccion" id="contacto">
+    <p class="tag">✦ Contacto</p>
+    <div class="divisor"></div>
+    <h2>¿Trabajamos juntos?</h2>
+    <div class="contacto-box">
+      <p>Si tenés un proyecto en mente, escribime y lo hacemos realidad.</p>
+      <button class="btn" onclick="window.location.href='mailto:tu@email.com'">
+        Escribime ✉️
+      </button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="redes">
+      <a href="#" class="red-link">GitHub</a>
+      <a href="#" class="red-link">LinkedIn</a>
+      <a href="#" class="red-link">Instagram</a>
+      <a href="#" class="red-link">Twitter / X</a>
+    </div>
+    <p>© 2026 Baltazar · Hecho con 💜 y mucho CSS</p>
+  </footer>
+
+  <script>
+    // CURSOR
+    const cursor = document.getElementById('cursor');
+    const follower = document.getElementById('cursorFollower');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX - 6 + 'px';
+      cursor.style.top = e.clientY - 6 + 'px';
+      follower.style.left = e.clientX - 18 + 'px';
+      follower.style.top = e.clientY - 18 + 'px';
+    });
+
+    // SCROLL SUAVE
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector(link.getAttribute('href'))
+          .scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // TYPEWRITER
+    const frases = [
+      'Creo interfaces que enamoran ✨',
+      'Integro IA en experiencias web 🤖',
+      'Convierto ideas en código 💻',
+      'Diseño con propósito y estilo 🎨'
+    ];
+    let fraseIndex = 0;
+    let charIndex = 0;
+    let borrando = false;
+    const typeEl = document.getElementById('typewriter-text');
+
+    function typewriter() {
+      const frase = frases[fraseIndex];
+      if (!borrando) {
+        typeEl.textContent = frase.substring(0, charIndex + 1);
+        charIndex++;
+        if (charIndex === frase.length) {
+          borrando = true;
+          setTimeout(typewriter, 1500);
+          return;
+        }
+      } else {
+        typeEl.textContent = frase.substring(0, charIndex - 1);
+        charIndex--;
+        if (charIndex === 0) {
+          borrando = false;
+          fraseIndex = (fraseIndex + 1) % frases.length;
+        }
+      }
+      setTimeout(typewriter, borrando ? 40 : 80);
+    }
+    typewriter();
+
+    // PARTÍCULAS
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.5,
+        speedY: (Math.random() - 0.5) * 0.5,
+        opacity: Math.random() * 0.5 + 0.2
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(168, 85, 247, ${p.opacity})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+
+</body>
+</html>
