@@ -468,6 +468,7 @@
       <li><a href="#sobre-mi">Sobre mí</a></li>
       <li><a href="#proyectos">Proyectos</a></li>
       <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#chat">Chat IA</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -578,7 +579,19 @@
       </div>
     </div>
   </section>
-
+<!-- CHAT IA -->
+  <section class="seccion" id="chat">
+    <p class="tag">✦ Chat con IA</p>
+    <div class="divisor"></div>
+    <h2>Hablá con mi IA 🤖</h2>
+    <div style="background:#111111;border:1px solid #1f1f1f;border-radius:20px;padding:2rem;margin-top:2rem;text-align:left;">
+      <div id="chat-messages" style="height:300px;overflow-y:auto;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:1rem;"></div>
+      <div style="display:flex;gap:1rem;">
+        <input id="chat-input" type="text" placeholder="Escribí algo..." style="flex:1;padding:0.8rem 1.2rem;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:50px;color:#ffffff;font-size:0.95rem;outline:none;"/>
+        <button onclick="enviarMensaje()" style="padding:0.8rem 1.5rem;background:#a855f7;border:none;border-radius:50px;color:white;font-size:0.95rem;cursor:none;">Enviar</button>
+      </div>
+    </div>
+  </section>
   <!-- CONTACTO -->
   <section class="seccion" id="contacto">
     <p class="tag">✦ Contacto</p>
@@ -697,6 +710,44 @@
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+    });
+    // CHAT IA SEGURO
+    async function enviarMensaje() {
+      const input = document.getElementById('chat-input');
+      const messages = document.getElementById('chat-messages');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      messages.innerHTML += `
+        <div style="align-self:flex-end;background:#a855f7;color:white;padding:0.7rem 1.2rem;border-radius:18px 18px 4px 18px;max-width:70%;font-size:0.9rem;">${texto}</div>`;
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+
+      messages.innerHTML += `<div id="loading" style="align-self:flex-start;background:#1a1a1a;color:#888;padding:0.7rem 1.2rem;border-radius:18px 18px 18px 4px;font-size:0.9rem;">Escribiendo...</div>`;
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: texto })
+        });
+
+        const data = await response.json();
+        document.getElementById('loading').remove();
+
+        messages.innerHTML += `
+          <div style="align-self:flex-start;background:#1a1a1a;color:#cccccc;padding:0.7rem 1.2rem;border-radius:18px 18px 18px 4px;max-width:70%;font-size:0.9rem;">${data.reply}</div>`;
+        messages.scrollTop = messages.scrollHeight;
+
+      } catch (error) {
+        document.getElementById('loading').remove();
+        messages.innerHTML += `
+          <div style="align-self:flex-start;background:#1a1a1a;color:#ff6b6b;padding:0.7rem 1.2rem;border-radius:18px 18px 18px 4px;font-size:0.9rem;">Error al conectar 😕</div>`;
+      }
+    }
+
+    document.getElementById('chat-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') enviarMensaje();
     });
   </script>
 
